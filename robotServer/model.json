@@ -1,0 +1,15 @@
+{
+    "head": {
+        "rotation": 3,
+        "inclination": 1  
+    },
+    "leftArm": {
+        "elbow": 90,
+        "wrist": 3
+    },
+    "rightArm": {
+        "elbow": 90,
+        "wrist": 3
+    }
+
+}
