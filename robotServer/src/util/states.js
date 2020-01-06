@@ -208,12 +208,14 @@ var headStates = {
         // para cima
         UP: {
             key: "UP",
+            value: 1, 
             previous: null,
             next: "IN_REST"
         },
         // em repouso
         IN_REST: {
             key: "IN_REST",
+            value: 2, 
             previous: "UP",
             next: "DOWN"
         },
@@ -221,6 +223,7 @@ var headStates = {
         // para baixo,
         DOWN: {
             key: "DOWN",
+            value: 3, 
             previous: "IN_REST",
             next: null
         },
@@ -232,21 +235,32 @@ var headStates = {
         
         MINUS_90: {
             key: "MINUS_90",
+            value: 90,
             previous: null,
             next: "MINUS_45"
         },
         MINUS_45: {
             key: "MINUS_45",
+            value: 45,
             previous: "MINUS_90",
             next: "IN_REST"
         },
         IN_REST: {
             key: "IN_REST",
+            value: 1,
             previous: "MINUS_45",
             next: null
         }
     }
 
+}
+
+exports.getHeadInclinationStates = () =>{
+    return headStates.inclination;
+}
+
+exports.getHeadRotationStates = () =>{
+    return headStates.rotation;
 }
 
 exports.getHeadStates = () => {

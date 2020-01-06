@@ -7,24 +7,43 @@ const util = require('./../util/states');
 
 // inclinação da cabeça
 exports.moveHeadInclination = (req, res) => {
+    // estado atual da inclinação da cabeça 
+    currentHeadInclination = model.getHeadInclination();
 
-    if (req.body.state in headStates.inclination) {
-        model.putHeadInclination(req.body.state);
-        res.status(200).json({ state: model.getHeadInclination() });
+    // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
+    if (req.body.state == currentHeadInclination.previous || req.body.state == currentHeadInclination.next) {
+        newCurrentState = util.getAlike(req.body.state, util.getHeadInclinationStates());
+        console.log(newCurrentState);
+        model.putHeadInclination(newCurrentState);
+        res.status(200).json({ state: model.getHeadInclination()});
     } else {
-        res.status(400).json('movimento inválido. Argumento no campo body inválido ou faltando');
+        res.status(400).json('movimento inválido');
     }
 
 };
 
 // rotação da cabeça
 exports.moveHeadRotation = (req, res) => {
+    // estado atual da rotação da cabeça
+    currentHeadRotation = model.getHeadRotation();
+    // estado atual da inclinação da cabeça
+    currentHeadInclination = model.getHeadInclination();
 
-    if (req.body.state in headStates.rotation) {
-        model.putHeadRotation(req.body.state);
-        res.status(200).json({ state: model.getHeadRotation() });
+    // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
+    if (req.body.state == currentHeadRotation.previous || req.body.state == currentHeadRotation.next) {
+        
+        if(currentHeadInclination != util.getHeadInclinationStates().DOWN){
+
+        newCurrentState = util.getAlike(req.body.state, util.getHeadRotationStates());
+        model.putHeadRotation(newCurrentState);
+        res.status(200).json({ state: model.getHeadRotation()});
+        }else{
+            console.log(currentHeadInclination);
+            console.log(util.getHeadInclinationStates().DOWN);
+            res.status(400).json('A inclinação da cabeça não pode estar para baixo');
+        }
     } else {
-        res.status(400).json('movimento inválido. Argumento no campo body inválido ou faltando');
+        res.status(400).json('movimento inválido');
     }
 
 }
