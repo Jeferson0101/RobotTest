@@ -12,8 +12,9 @@ exports.moveHeadInclination = (req, res) => {
 
     // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
     if (req.body.state == currentHeadInclination.previous || req.body.state == currentHeadInclination.next) {
+        // pega o estado estado correspondente ao passado na requisição
         newCurrentState = util.getAlike(req.body.state, util.getHeadInclinationStates());
-        console.log(newCurrentState);
+        // adiciona o novo estado ao robô
         model.putHeadInclination(newCurrentState);
         res.status(200).json({ state: model.getHeadInclination()});
     } else {
@@ -32,14 +33,13 @@ exports.moveHeadRotation = (req, res) => {
     // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
     if (req.body.state == currentHeadRotation.previous || req.body.state == currentHeadRotation.next) {
         
+        // verifica se a inclinação da cabeça está para baixo
         if(currentHeadInclination != util.getHeadInclinationStates().DOWN){
-
         newCurrentState = util.getAlike(req.body.state, util.getHeadRotationStates());
         model.putHeadRotation(newCurrentState);
         res.status(200).json({ state: model.getHeadRotation()});
         }else{
-            console.log(currentHeadInclination);
-            console.log(util.getHeadInclinationStates().DOWN);
+
             res.status(400).json('A inclinação da cabeça não pode estar para baixo');
         }
     } else {
