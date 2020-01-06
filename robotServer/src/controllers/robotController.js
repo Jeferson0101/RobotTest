@@ -1,15 +1,6 @@
 const model = require('./../model/model');
 const util = require('./../util/states');
 
-const headStates = util.getHeadStates();
-const wristStates = util.getWristStates();
-const elbowStates = util.getElbowStates();
-
-util.setHighlyContracted(1,null,elbowStates.IN_REST);
-console.log(util.getHighlyContracted());
-
-
-
 // se sobrar tempo. Garantir de que a informação foi setada .then nas funções de PUT
 // Verificar se consegue alterar o cotovelo para highly_contracted e movimentar os pulsos
 
@@ -41,52 +32,35 @@ exports.moveHeadRotation = (req, res) => {
 // cotovelo direito
 exports.moveRightElbow = (req, res) => {
 
-    // verificar se o que o usuário está mandando pertence algum dos estados válidos do cotovelo
-    if (req.body.state in elbowStates) {
-
-        // Procura pelo valor de elbowStates correspondente ao index 
-        Object.keys(elbowStates).forEach((value1, index1) => {
-            if(req.body.state == value1){
-                
-                Object.values(elbowStates).forEach((value2, index2) =>{
-                    if(index1 == index2){
-                        model.putRightElbowState(value2);
-                        res.status(200).json({ state: model.getRightElbowState()});
-                    }
-                     
-                });
-                
-            }
-        });
+    currentState = model.getRightElbowState();
+    // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
+    if (req.body.state == currentState.previous || req.body.state == currentState.next) {
+        // método que pega o estado correspondente ao passado na requisição
+        newCurrentState = util.getAlike(req.body.state, util.getElbowStates());
+        model.putRightElbowState(newCurrentState);
+        res.status(200).json({ state: model.getRightElbowState() });
     } else {
-        res.status(400).json('movimento inválido. Argumento no campo body inválido ou faltando');
+        // achar o erro para esta ocasião
+        res.status(400).json('Movimento proibido');
     }
-
 };
 
 // cotovelo esquerdo
 exports.moveleftElbow = (req, res) => {
 
-    if (req.body.state in elbowStates) {
+    currentState = model.getLeftElbowState();
 
-        // Procura pelo valor de elbowStates correspondente ao index 
-        Object.keys(elbowStates).forEach((value1, index1) => {
-            if(req.body.state == value1){
-                
-                Object.values(elbowStates).forEach((value2, index2) =>{
-                    if(index1 == index2){
-                        model.putLeftElbowState(value2);
-                        res.status(200).json({ state: model.getLeftElbowState()});
-                    }
-                     
-                });
-                
-            }
-        });
+    // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
+    if (req.body.state == currentState.previous || req.body.state == currentState.next) {
+
+        // método que pega o estado correspondente ao passado na requisição
+        newCurrentState = util.getAlike(req.body.state, util.getElbowStates());
+        model.putLeftElbowState(newCurrentState);
+        res.status(200).json({ state: model.getLeftElbowState() });
     } else {
-        res.status(400).json('movimento inválido. Argumento no campo body inválido ou faltando');
+        // achar o erro para esta ocasião
+        res.status(400).json('Movimento inválido');
     }
-
 };
 
 //move pulso direito
@@ -94,41 +68,40 @@ exports.moveRightWrist = (req, res) => {
 
     // pega estado atual do cotovelo direito
     currentElbowState = model.getRightElbowState();
+    currentRightWristState = model.getRightWristState();
 
-    // se o estado enviado pelo usuário pertence a algum estado permitido então ele compara se o cotovelo
-    //está fortemente contraído
-    if (req.body.state in wristStates) {
-        console.log(currentElbowState); // remover depois
-
-        if (currentElbowState == elbowStates.HIGHLY_CONTRACTED) {
-            model.putRightWristState(req.body.state);
+    if (req.body.state == currentRightWristState.previous || req.body.state == currentRightWristState.next) {
+        // Compara se o cotovelo está fortemente contraído
+        if (currentElbowState.key == util.getElbowStates().HIGHLY_CONTRACTED.key) {
+            newCurrentState = util.getAlike(req.body.state, util.getWristStates());
+            model.putRightWristState(newCurrentState);
             res.status(200).json({ state: model.getRightWristState() });
         } else {
             res.status(409).json('O cotovelo deve estar fortemente contraído para realizar o movimento dos pulsos')
         }
-
     } else {
-        res.status(400).json('movimento inválido. Argumento no campo body inválido ou faltando');
+        // verificar qual erro é este
+        res.status(409).json('Movimento inválido');
     }
-
 }
-
 //pulso esquerdo
 exports.moveLeftWrist = (req, res) => {
-
-    // pega estado atual do cotovelo esquerdo
+    // pega estado atual do cotovelo direito
     currentElbowState = model.getLeftElbowState();
-    console.log(currentElbowState); // remover depois
-    if (req.body.state in wristStates) {
-        if (currentElbowState == elbowStates.HIGHLY_CONTRACTED) {
-            model.putLeftWristState(req.body.state);
-            res.status(200).json({ state: model.getLeftWristState() });
-        } else {
-            res.status(409).json('O cotovelo deve estar fortemente contraído para realizar o movimento dos pulsos');
-        }
+    currentLeftWristState = model.getLeftWristState();
 
+    if (req.body.state == currentLeftWristState.previous || req.body.state == currentLeftWristState.next) {
+        // Compara se o cotovelo está fortemente contraído
+        if (currentElbowState.key == util.getElbowStates().HIGHLY_CONTRACTED.key) {
+            newCurrentState = util.getAlike(req.body.state, util.getWristStates());
+            model.putLeftWristState(newCurrentState);
+            res.status(200).json({ state: model.getLeftWristState()});
+        } else {
+            res.status(409).json('O cotovelo deve estar fortemente contraído para realizar o movimento dos pulsos')
+        }
     } else {
-        res.status(400).json('movimento inválido. Argumento no campo body inválido ou faltando');
+        // verificar qual erro é este
+        res.status(409).json('Movimento inválido');
     }
 
 }

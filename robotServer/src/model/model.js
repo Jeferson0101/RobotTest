@@ -6,7 +6,7 @@
  // Objeto robô em repouso com configurações padrões em estado de repouso
  robot = {
     "head": {
-        "rotation": headStates.rotation.IN_REST,
+        "rotation": headStates.inclination.IN_REST,
         "inclination": headStates.inclination.IN_REST  
     },
     "leftArm": {
@@ -76,5 +76,5 @@ exports.putRightElbowState = (rightElbow) =>{
 }
 
 exports.getRightElbowState = () =>{
-    return robot.rightArm.elbow.valueOf();
+    return robot.rightArm.elbow;
 }
