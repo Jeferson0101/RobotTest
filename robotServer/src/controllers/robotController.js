@@ -10,16 +10,22 @@ exports.moveHeadInclination = (req, res) => {
     // estado atual da inclinação da cabeça 
     currentHeadInclination = model.getHeadInclination();
 
-    // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
-    if (req.body.state == currentHeadInclination.previous || req.body.state == currentHeadInclination.next) {
-        // pega o estado estado correspondente ao passado na requisição
-        newCurrentState = util.getAlike(req.body.state, util.getHeadInclinationStates());
-        // adiciona o novo estado ao robô
-        model.putHeadInclination(newCurrentState);
-        res.status(200).json({ state: model.getHeadInclination()});
+    //se permanecer no mesmo estado. Nada é modificado
+    if (req.body.state == currentHeadInclination.key) {
+        res.status(304).json('Nada foi modificado. inclinação da cabeça permanece no mesmo estado');
     } else {
-        res.status(400).json('movimento inválido');
+        // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
+        if (req.body.state == currentHeadInclination.previous || req.body.state == currentHeadInclination.next) {
+            // pega o estado estado correspondente ao passado na requisição
+            newCurrentState = util.getAlike(req.body.state, util.getHeadInclinationStates());
+            // adiciona o novo estado ao robô
+            model.putHeadInclination(newCurrentState);
+            res.status(200).json({ state: model.getHeadInclination() });
+        } else {
+            res.status(400).json('movimento inválido');
+        }
     }
+
 
 };
 
@@ -30,20 +36,26 @@ exports.moveHeadRotation = (req, res) => {
     // estado atual da inclinação da cabeça
     currentHeadInclination = model.getHeadInclination();
 
-    // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
-    if (req.body.state == currentHeadRotation.previous || req.body.state == currentHeadRotation.next) {
-        
-        // verifica se a inclinação da cabeça está para baixo
-        if(currentHeadInclination != util.getHeadInclinationStates().DOWN){
-        newCurrentState = util.getAlike(req.body.state, util.getHeadRotationStates());
-        model.putHeadRotation(newCurrentState);
-        res.status(200).json({ state: model.getHeadRotation()});
-        }else{
-
-            res.status(400).json('A inclinação da cabeça não pode estar para baixo');
-        }
+    //se permanecer no mesmo estado. Nada é modificado
+    if (req.body.state == currentHeadRotation.key) {
+        res.status(304).json('Nada foi modificado. rotação da cabeça permanece no mesmo estado');
     } else {
-        res.status(400).json('movimento inválido');
+
+        // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
+        if (req.body.state == currentHeadRotation.previous || req.body.state == currentHeadRotation.next) {
+
+            // verifica se a inclinação da cabeça está para baixo
+            if (currentHeadInclination != util.getHeadInclinationStates().DOWN) {
+                newCurrentState = util.getAlike(req.body.state, util.getHeadRotationStates());
+                model.putHeadRotation(newCurrentState);
+                res.status(200).json({ state: model.getHeadRotation() });
+            } else {
+
+                res.status(400).json('A inclinação da cabeça não pode estar para baixo');
+            }
+        } else {
+            res.status(400).json('movimento inválido');
+        }
     }
 
 }
@@ -52,15 +64,22 @@ exports.moveHeadRotation = (req, res) => {
 exports.moveRightElbow = (req, res) => {
 
     currentState = model.getRightElbowState();
-    // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
-    if (req.body.state == currentState.previous || req.body.state == currentState.next) {
-        // método que pega o estado correspondente ao passado na requisição
-        newCurrentState = util.getAlike(req.body.state, util.getElbowStates());
-        model.putRightElbowState(newCurrentState);
-        res.status(200).json({ state: model.getRightElbowState() });
+
+    //se permanecer no mesmo estado. Nada é modificado
+    if (req.body.state == currentState.key) {
+        res.status(304).json('Nada foi modificado. cotovelo direito permanece no mesmo estado');
     } else {
-        // achar o erro para esta ocasião
-        res.status(400).json('Movimento proibido');
+
+        // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
+        if (req.body.state == currentState.previous || req.body.state == currentState.next) {
+            // método que pega o estado correspondente ao passado na requisição
+            newCurrentState = util.getAlike(req.body.state, util.getElbowStates());
+            model.putRightElbowState(newCurrentState);
+            res.status(200).json({ state: model.getRightElbowState() });
+        } else {
+            // achar o erro para esta ocasião
+            res.status(400).json('Movimento proibido');
+        }
     }
 };
 
@@ -69,16 +88,21 @@ exports.moveleftElbow = (req, res) => {
 
     currentState = model.getLeftElbowState();
 
-    // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
-    if (req.body.state == currentState.previous || req.body.state == currentState.next) {
-
-        // método que pega o estado correspondente ao passado na requisição
-        newCurrentState = util.getAlike(req.body.state, util.getElbowStates());
-        model.putLeftElbowState(newCurrentState);
-        res.status(200).json({ state: model.getLeftElbowState() });
+    //se permanecer no mesmo estado. Nada é modificado
+    if (req.body.state == currentState.key) {
+        res.status(304).json('Nada foi modificado. cotovelo esquerdo permanece no mesmo estado');
     } else {
-        // achar o erro para esta ocasião
-        res.status(400).json('Movimento inválido');
+        // verifica se o estado passado na requisição pertence a algum dos estados válidos a partir do atual
+        if (req.body.state == currentState.previous || req.body.state == currentState.next) {
+
+            // método que pega o estado correspondente ao passado na requisição
+            newCurrentState = util.getAlike(req.body.state, util.getElbowStates());
+            model.putLeftElbowState(newCurrentState);
+            res.status(200).json({ state: model.getLeftElbowState() });
+        } else {
+            // achar o erro para esta ocasião
+            res.status(400).json('Movimento inválido');
+        }
     }
 };
 
@@ -89,18 +113,23 @@ exports.moveRightWrist = (req, res) => {
     currentElbowState = model.getRightElbowState();
     currentRightWristState = model.getRightWristState();
 
-    if (req.body.state == currentRightWristState.previous || req.body.state == currentRightWristState.next) {
-        // Compara se o cotovelo está fortemente contraído
-        if (currentElbowState.key == util.getElbowStates().HIGHLY_CONTRACTED.key) {
-            newCurrentState = util.getAlike(req.body.state, util.getWristStates());
-            model.putRightWristState(newCurrentState);
-            res.status(200).json({ state: model.getRightWristState() });
-        } else {
-            res.status(409).json('O cotovelo deve estar fortemente contraído para realizar o movimento dos pulsos')
-        }
+    //se permanecer no mesmo estado. Nada é modificado
+    if (req.body.state == currentRightWristState.key) {
+        res.status(304).json('Nada foi modificado. pulso direito permanece no mesmo estado');
     } else {
-        // verificar qual erro é este
-        res.status(409).json('Movimento inválido');
+        if (req.body.state == currentRightWristState.previous || req.body.state == currentRightWristState.next) {
+            // Compara se o cotovelo está fortemente contraído
+            if (currentElbowState.key == util.getElbowStates().HIGHLY_CONTRACTED.key) {
+                newCurrentState = util.getAlike(req.body.state, util.getWristStates());
+                model.putRightWristState(newCurrentState);
+                res.status(200).json({ state: model.getRightWristState() });
+            } else {
+                res.status(409).json('O cotovelo deve estar fortemente contraído para realizar o movimento dos pulsos')
+            }
+        } else {
+            // verificar qual erro é este
+            res.status(409).json('Movimento inválido');
+        }
     }
 }
 //pulso esquerdo
@@ -109,20 +138,24 @@ exports.moveLeftWrist = (req, res) => {
     currentElbowState = model.getLeftElbowState();
     currentLeftWristState = model.getLeftWristState();
 
-    if (req.body.state == currentLeftWristState.previous || req.body.state == currentLeftWristState.next) {
-        // Compara se o cotovelo está fortemente contraído
-        if (currentElbowState.key == util.getElbowStates().HIGHLY_CONTRACTED.key) {
-            newCurrentState = util.getAlike(req.body.state, util.getWristStates());
-            model.putLeftWristState(newCurrentState);
-            res.status(200).json({ state: model.getLeftWristState()});
-        } else {
-            res.status(409).json('O cotovelo deve estar fortemente contraído para realizar o movimento dos pulsos')
-        }
+    //se permanecer no mesmo estado. Nada é modificado
+    if (req.body.state == currentLeftWristState.key) {
+        res.status(304).json('Nada foi modificado. pulso esquerdo permanece no mesmo estado');
     } else {
-        // verificar qual erro é este
-        res.status(409).json('Movimento inválido');
+        if (req.body.state == currentLeftWristState.previous || req.body.state == currentLeftWristState.next) {
+            // Compara se o cotovelo está fortemente contraído
+            if (currentElbowState.key == util.getElbowStates().HIGHLY_CONTRACTED.key) {
+                newCurrentState = util.getAlike(req.body.state, util.getWristStates());
+                model.putLeftWristState(newCurrentState);
+                res.status(200).json({ state: model.getLeftWristState() });
+            } else {
+                res.status(409).json('O cotovelo deve estar fortemente contraído para realizar o movimento dos pulsos')
+            }
+        } else {
+            // verificar qual erro é este
+            res.status(409).json('Movimento inválido');
+        }
     }
-
 }
 
 
