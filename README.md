@@ -3,3 +3,13 @@ Na parte do back-end está tudo funcionando com todas restrições de movimento 
 ![insomnia](https://user-images.githubusercontent.com/29130675/71869901-96e48900-30f2-11ea-8564-8fa29125b174.PNG)
 
 Na parte do front-end foi feita a parte do serviço de requisições PUT ao servidor (envia requisição com o estado e recebe o resultado assim como feito pelo cliente rest na imagem acima). Faltou o GET só para pegar o estado inicial do robô e a parte de visualização e controle do robô pelo usuário.
+
+Requições para rodar o servidor:
+Nodejs
+
+Depois de instalado o Nodejs é só entrar na pasta e rodar o comando 
+"node server.js"
+
+Download do cliente rest Insomnia caso for usar
+https://insomnia.rest/download/
+
